@@ -1,0 +1,18 @@
+#!/bin/bash
+#set -x
+rm build.log
+
+# -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-parentheses-equality -Wno-enum-conversion -Wno-switch -Wno-enum-conversion -Wno-parentheses-equalit -Wno-logical-not-parentheses -Wno-tautological-constant-compare
+
+echo "Compile"
+clang -DSPEC_CPU -DSPEC_CPU_MACOSX -DSPEC_CPU_LITTLEENDIAN -DSPEC_CPU_X64 -DSPEC_CPU_LP64 -DNDEBUG -O1 -I403.gcc/src -o gcc $(pwd)/403.gcc/src/*.c 2>>build.log
+
+echo "Run"
+./gcc -o cccp.s 403.gcc/data/test/input/cccp.i
+
+D=$(diff -u cccp.s 403.gcc/data/test/output/cccp.s)
+if [ -z "${D}" ]; then
+  echo "Success"
+else
+  echo "Fail"
+fi
